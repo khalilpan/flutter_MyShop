@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_shop/providers/models/product.dart';
 
 class ProductsProvider with ChangeNotifier {
+  var _showFavoritesOnly = false;
+
   List<Product> _productItems = [
     Product(
       id: 'p1',
@@ -39,6 +41,10 @@ class ProductsProvider with ChangeNotifier {
 
   List<Product> get getProductItems {
     return [..._productItems];
+  }
+
+  List<Product> get getFavorites {
+    return [..._productItems.where((element) => element.isFavorite == true)];
   }
 
   Product getProductById(String id) {
