@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:my_shop/providers/Cart.dart' show Cart;
-import 'package:my_shop/widgets/cart_item.dart';
+import 'package:my_shop/providers/Cart.dart';
 
 class OrderItem {
   final String id;
@@ -25,6 +24,5 @@ class Orders with ChangeNotifier {
     _orders.add(OrderItem(
         DateTime.now().toString(), total, cartProducts, DateTime.now()));
     notifyListeners();
-    
   }
 }
