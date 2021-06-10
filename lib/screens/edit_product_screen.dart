@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/providers/models/product.dart';
+import 'package:my_shop/providers/products_provider.dart';
+import 'package:provider/provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({key}) : super(key: key);
@@ -52,7 +54,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _formGlobalKey.currentState.save();
-    print(_editedProduct.title);
+    Provider.of<ProductsProvider>(context, listen: false)
+        .addProduct(_editedProduct);
+    Navigator.of(context).pop(); //to close the current page and go back
   }
 
   @override
@@ -192,19 +196,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           controller: _imageUrlController,
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Please enter an image URL.';
+                              return 'Please enter an image URL1.';
                             }
-                            if (!value.startsWith('http') ||
-                                !value.startsWith('https') ||
-                                !value.startsWith('HTTP') ||
-                                !value.startsWith('HTTPS')) {
-                              return 'Please enter a valid image URL.';
-                            }
-                            if (value.startsWith('.png') ||
-                                value.startsWith('.jpg') ||
-                                value.startsWith('.jpeg')) {
-                              return 'Please enter a valid image URL.';
-                            }
+                            // if (!value.startsWith('http') ||
+                            //     !value.startsWith('https') ||
+                            //     !value.startsWith('HTTP') ||
+                            //     !value.startsWith('HTTPS')) {
+                            //   return 'Please enter a valid image URL2.';
+                            // }
+                            // if (!value.endsWith('.png') ||
+                            //     !value.endsWith('.jpg') ||
+                            //     !value.endsWith('.jpeg')) {
+                            //   return 'Please enter a valid image URL3.';
+                            // }
                             return null;
                           },
                           onFieldSubmitted: (_) {

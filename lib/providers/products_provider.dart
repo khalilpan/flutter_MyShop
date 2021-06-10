@@ -50,4 +50,18 @@ class ProductsProvider with ChangeNotifier {
   Product getProductById(String id) {
     return _productItems.firstWhere((item) => item.id == id);
   }
+
+  void addProduct(Product product) {
+    final newProduct = Product(
+      id: DateTime.now().toString(),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+    _productItems.add(newProduct);
+    // _productItems.insert(0, newProduct); //add to the begging of the list
+
+    notifyListeners();
+  }
 }
