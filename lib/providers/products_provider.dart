@@ -74,4 +74,9 @@ class ProductsProvider with ChangeNotifier {
       print('Product not found.');
     }
   }
+
+  void deleteProduct(String id) {
+    _productItems.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
 }
