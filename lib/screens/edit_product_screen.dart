@@ -47,6 +47,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveFrom() {
+    final isValid = _formGlobalKey.currentState.validate();
+    if (!isValid) {
+      return;
+    }
     _formGlobalKey.currentState.save();
     print(_editedProduct.title);
   }
@@ -77,6 +81,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       labelText: 'Title',
                     ),
                     textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a name.';
+                      }
+                      return null;
+                    },
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(
                           _priceFocusNode); //3- to move the cursor of keyboard to the especific textfield after clicking on next botton on keyboard
@@ -96,6 +106,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a price.';
+                      }
+                      if (double.tryParse(value) == null) {
+                        return 'Please enter a valid price.';
+                      }
+                      if (double.parse(value) <= 0) {
+                        return 'Please enter a price greather than zero.';
+                      }
+                      return null;
+                    },
                     focusNode:
                         _priceFocusNode, //2-connecting focus variable to  focus parameter of textField
                     onFieldSubmitted: (_) {
@@ -123,6 +145,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       //     _priceFocusNode); //3- to move the cursor of keyboard to the especific textfield after clicking on next botton on keyboard
                     },
                     focusNode: _descriptionFocusNode,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter description.';
+                      }
+                      return null;
+                    },
                     onSaved: (value) {
                       _editedProduct = Product(
                           id: _editedProduct.id,
@@ -162,6 +190,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           textInputAction: TextInputAction.done,
                           focusNode: _imageUrlFocusNode,
                           controller: _imageUrlController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter an image URL.';
+                            }
+                            if (!value.startsWith('http') ||
+                                !value.startsWith('https') ||
+                                !value.startsWith('HTTP') ||
+                                !value.startsWith('HTTPS')) {
+                              return 'Please enter a valid image URL.';
+                            }
+                            if (value.startsWith('.png') ||
+                                value.startsWith('.jpg') ||
+                                value.startsWith('.jpeg')) {
+                              return 'Please enter a valid image URL.';
+                            }
+                            return null;
+                          },
                           onFieldSubmitted: (_) {
                             _saveFrom();
                           },
