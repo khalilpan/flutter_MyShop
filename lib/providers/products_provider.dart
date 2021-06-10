@@ -64,4 +64,14 @@ class ProductsProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodIndex = _productItems.indexWhere((item) => item.id == id);
+    if (prodIndex >= 0) {
+      _productItems[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print('Product not found.');
+    }
+  }
 }

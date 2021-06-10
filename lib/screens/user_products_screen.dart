@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_shop/providers/models/product.dart';
 import 'package:my_shop/providers/products_provider.dart';
 import 'package:my_shop/screens/edit_product_screen.dart';
 import 'package:my_shop/widgets/app_drawer.dart';
@@ -32,6 +31,7 @@ class UserProductsScreen extends StatelessWidget {
           itemBuilder: (ctx, index) => Column(
             children: [
               UserProductItem(
+                productData.getProductItems[index].id,
                 productData.getProductItems[index].title,
                 productData.getProductItems[index].imageUrl,
               ),
