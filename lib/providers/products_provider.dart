@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:my_shop/providers/models/product.dart';
 import 'package:http/http.dart' as http;
@@ -97,5 +99,29 @@ class ProductsProvider with ChangeNotifier {
   void deleteProduct(String id) {
     _productItems.removeWhere((element) => element.id == id);
     notifyListeners();
+  }
+
+  Future<Void> fetchAndSetProducts() async {
+    final url = Uri.https(
+        'flutter-shop-app-8d3e1-default-rtdb.firebaseio.com', '/products.json');
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+      final extraxtedData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      extraxtedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          imageUrl: prodData['imageUrl'],
+        ));
+      });
+      _productItems = loadedProducts;
+      notifyListeners();
+    } catch (error) {
+      print(error);
+    }
   }
 }
