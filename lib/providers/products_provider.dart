@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:my_shop/http_exception/heep_exception.dart';
 import 'package:my_shop/providers/models/product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -111,9 +112,21 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
-    _productItems.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = Uri.https('flutter-shop-app-8d3e1-default-rtdb.firebaseio.com',
+        '/products/$id.json');
+    final existingProductIndex =
+        _productItems.indexWhere((element) => element.id == id);
+    final existingProduct = _productItems[existingProductIndex];
+    _productItems.removeAt(existingProductIndex);
     notifyListeners();
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      _productItems.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete the product.');
+    }
   }
 
   Future<Void> fetchAndSetProducts() async {
