@@ -137,6 +137,11 @@ class ProductsProvider with ChangeNotifier {
       print(json.decode(response.body));
       final extraxtedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+
+      // if (extraxtedData == null) {
+      //   return;
+      // }
+
       extraxtedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
