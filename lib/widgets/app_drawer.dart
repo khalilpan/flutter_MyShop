@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/providers/auth.dart';
 import 'package:my_shop/screens/orders_screen.dart';
 import 'package:my_shop/screens/user_products_screen.dart';
+import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({key}) : super(key: key);
@@ -38,6 +40,16 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(UserProductsScreen.routeName);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Logout'),
+            onTap: () {
+              Navigator.of(context)
+                  .pop(); //to close the Drawer menu before logout
+              Provider.of<Auth>(context, listen: false).logOut();
             },
           ),
         ],
