@@ -8,6 +8,9 @@ import 'dart:convert';
 
 class ProductsProvider with ChangeNotifier {
   var _showFavoritesOnly = false;
+  String _authTekon;
+
+  ProductsProvider(this._authTekon, this._productItems);
 
   List<Product> _productItems = [
     // Product(
@@ -130,11 +133,11 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<Void> fetchAndSetProducts() async {
-    final url = Uri.https(
-        'flutter-shop-app-8d3e1-default-rtdb.firebaseio.com', '/products.json');
+    final url = Uri.parse(
+        'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products.json?auth=$_authTekon');
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
+      // print(json.decode(response.body));
       final extraxtedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
 
