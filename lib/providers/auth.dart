@@ -23,6 +23,10 @@ class Auth with ChangeNotifier {
     }
   }
 
+  String get getUserId {
+    return _userId;
+  }
+
   Future<void> _authenticate(String email, String password, urlSegment) async {
     const API_KEY = 'AIzaSyD_e8TLv0CjOBwwRm5RBKYiiM_qPfgOfeQ';
     final url = Uri.parse(

@@ -9,8 +9,8 @@ import 'dart:convert';
 class ProductsProvider with ChangeNotifier {
   var _showFavoritesOnly = false;
   String _authTekon;
-
-  ProductsProvider(this._authTekon, this._productItems);
+  String userId;
+  ProductsProvider(this._authTekon, this.userId, this._productItems);
 
   List<Product> _productItems = [
     // Product(
@@ -60,8 +60,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.https(
-        'flutter-shop-app-8d3e1-default-rtdb.firebaseio.com', '/products.json');
+    final url = Uri.parse(
+        'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products.json?auth=$_authTekon');
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -69,7 +69,7 @@ class ProductsProvider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite,
+            'creatorId': userId,
           }));
 
       final newProduct = Product(
@@ -93,9 +93,8 @@ class ProductsProvider with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _productItems.indexWhere((item) => item.id == id);
     if (prodIndex >= 0) {
-      final url = Uri.https(
-          'flutter-shop-app-8d3e1-default-rtdb.firebaseio.com',
-          '/products/$id.json');
+      final url = Uri.parse(
+          'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products/$id.json?auth=$_authTekon');
       try {
         await http.patch(url,
             body: json.encode({
@@ -116,8 +115,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.https('flutter-shop-app-8d3e1-default-rtdb.firebaseio.com',
-        '/products/$id.json');
+    final url = Uri.parse(
+        'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products/$id.json?auth=$_authTekon');
     final existingProductIndex =
         _productItems.indexWhere((element) => element.id == id);
     final existingProduct = _productItems[existingProductIndex];
@@ -132,18 +131,24 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  Future<Void> fetchAndSetProducts() async {
+  Future<Void> fetchAndSetProducts([bool filterByUser = false]) async {
+    String filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final url = Uri.parse(
-        'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products.json?auth=$_authTekon');
+        'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/products.json?auth=$_authTekon&$filterString');
     try {
       final response = await http.get(url);
-      // print(json.decode(response.body));
+      print(json.decode(response.body));
       final extraxtedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
 
-      // if (extraxtedData == null) {
-      //   return;
-      // }
+      if (extraxtedData == null) {
+        return null;
+      }
+      final urlFavoriteProducts = Uri.parse(
+          'https://flutter-shop-app-8d3e1-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$_authTekon');
+      final responseFavorite = await http.get(urlFavoriteProducts);
+      final favoriteData = json.decode(responseFavorite.body);
 
       extraxtedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -152,6 +157,8 @@ class ProductsProvider with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
       });
       _productItems = loadedProducts;
