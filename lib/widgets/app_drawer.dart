@@ -49,6 +49,8 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pop(); //to close the Drawer menu before logout
+
+              Navigator.of(context).pushReplacementNamed('/');
               Provider.of<Auth>(context, listen: false).logOut();
             },
           ),
